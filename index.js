@@ -20,7 +20,7 @@ wss.on('connection', (ws) => {
     let AS = "placeholder";
     function connectAS() {
 
-        AS = new WebSocket("wss://webmc.xyz/server");
+        AS = new WebSocket("wss://mc.arch.lol/");
         console.log("AS WebSocket instance created");
         AS.on('open', () => {
            console.log("Connected to Actual Server!"); 
