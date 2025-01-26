@@ -15,7 +15,7 @@ const wss = new WebSocket.Server({ server });
 wss.on('connection', (ws) => {
     console.log('Client connected');
 
-    const AS = new Websocket("wss://webmc.xyz/server");
+    const AS = new WebSocket("wss://webmc.xyz/server");
     AS.on('open', () => {
        console.log("Connected to Actual Server!"); 
     });
