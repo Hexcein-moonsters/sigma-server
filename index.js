@@ -34,12 +34,12 @@ wss.on('connection', (ws) => {
         });
         
         // Event listener for when the connection is closed
-        AS.on('close', (event) => {
-            if (event.code === 4001) {
+        AS.on('close', (code, reason) => {
+            if (code === 4001) {
                 // Ws hang up
             } else {
-                console.log('Connection closed:', event.code, event.reason);
-                ws.close(4002, event.reason); // Disconnect the client.
+                console.log('AS connection closed:', code, reason);
+                ws.close(4002, reason); // Disconnect the client.
             }
         });
         
