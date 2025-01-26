@@ -21,6 +21,7 @@ wss.on('connection', (ws) => {
     function connectAS() {
 
         AS = new WebSocket("wss://webmc.xyz/server");
+        console.log("AS WebSocket instance created");
         AS.on('open', () => {
            console.log("Connected to Actual Server!"); 
         });
@@ -37,8 +38,8 @@ wss.on('connection', (ws) => {
             if (event.code === 4001) {
                 // Ws hang up
             } else {
-                console.log('Connection closed:', code, reason.toString());
-                ws.close(4002, reason); // Disconnect the client.
+                console.log('Connection closed:', event.code, event.reason.toString());
+                ws.close(4002, event.reason); // Disconnect the client.
             }
         });
         
@@ -80,11 +81,11 @@ wss.on('connection', (ws) => {
         } else {
             console.log(message.type);
             console.log(firstRun);
-            if(message.type === 'utf8') {
+            if (!Buffer.isBuffer(message)) {
                 // Not mc related, so echo back
                 console.log(`Received message: ${message}`);
                 ws.send(`Echo: ${message}`);
-            } else if(message.type === 'binary') {
+            } else if (Buffer.isBuffer(message)) {
                 if (firstRun) {
                     connectAS();
                     firstRun = false;
@@ -101,12 +102,11 @@ wss.on('connection', (ws) => {
     });
 
     // Handle WebSocket close event
-    ws.on('close', (event) => {
-        const code = event.code;
+    ws.on('close', (code, reason) => {
         console.log(`Connection closed with code: ${code}`);
-        if (event.code === 4001) {
+        if (code === 4001) {
             // Closed by us
-        } else if (event.code === 4002) {
+        } else if (code === 4002) {
             // AS closed
             console.log("AS closed.");
         } else {
