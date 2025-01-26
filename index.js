@@ -75,6 +75,7 @@ wss.on('connection', (ws) => {
                 }
             }
             ws.send(JSON.stringify(msg));
+            console.log(`Closing WS connection with code: 4001, reason: "Closed by own Server"`);
             ws.close(4001, "Closed by own Server");
         } else {
             console.log(message.type);
@@ -101,7 +102,8 @@ wss.on('connection', (ws) => {
 
     // Handle WebSocket close event
     ws.on('close', (event) => {
-        console.log(event.code)
+        const code = event.code;
+        console.log(`Connection closed with code: ${code}`);
         if (event.code === 4001) {
             // Closed by us
         } else if (event.code === 4002) {
