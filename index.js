@@ -75,7 +75,7 @@ wss.on('connection', (ws) => {
                 }
             }
             ws.send(JSON.stringify(msg));
-            ws.close(4001);
+            ws.close(4001, "Closed by own Server");
         } else {
             console.log(message.type);
             console.log(firstRun);
@@ -110,7 +110,7 @@ wss.on('connection', (ws) => {
         } else {
             console.log('Client disconnected');
             if (AS !== "placeholder") {
-                AS.close(4001); // Disconnect from the Actual server.
+                AS.close(4001, "Ws hang up"); // Disconnect from the Actual server.
             } else {
                 console.log("AS was not yet connected, yet the ws already closed!");
             }
