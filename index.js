@@ -76,11 +76,9 @@ wss.on('connection', (ws) => {
                 }
             }
             ws.send(JSON.stringify(msg));
-            console.log(`Closing WS connection with code: 4001, reason: "Closed by own Server"`);
+            //console.log(`Closing WS connection with code: 4001, reason: "Closed by own Server"`);
             ws.close(4001, "Closed by own Server");
         } else {
-            console.log(message.type);
-            console.log(firstRun);
             if (!Buffer.isBuffer(message)) {
                 // Not mc related, so echo back
                 console.log(`Received message: ${message}`);
@@ -89,23 +87,37 @@ wss.on('connection', (ws) => {
                 if (firstRun) {
                     connectAS();
                     firstRun = false;
+
+                    if (AS.readyState === WebSocket.OPEN) {
+                        AS.send(message);
+                    } else {
+                        const maxRetries = 20; // Try for 10 seconds (20 * 500ms)
+                        let attempts = 0;
+                        const trySend = setInterval(() => {
+                            if (AS.readyState === WebSocket.OPEN) {
+                                AS.send(message);
+                                clearInterval(trySend);
+                            } else if (++attempts >= maxRetries) {
+                                console.error("AS failed to open. Message not sent.");
+                                clearInterval(trySend);
+                                ws.close(4001, "Couldn't connect to AS.");
+                            }
+                        }, 500);
+                    }
                 }
                 // Client requsted server data.
                 // Ask the Actual Server the same data.
-                if (AS == "placeholder") {
-                    console.log("Not yet connected to AS!");
-                } else {
-                    AS.send(message);
-                }
+                AS.send(message);
             }
         }
     });
 
     // Handle WebSocket close event
     ws.on('close', (code, reason) => {
-        console.log(`Connection closed with code: ${code}`);
+        //console.log(`Connection closed with code: ${code}`);
         if (code === 4001) {
             // Closed by us
+            console.log("Ws closed, requested by us.");
         } else if (code === 4002) {
             // AS closed
             console.log("AS closed.");
