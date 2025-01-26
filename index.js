@@ -15,6 +15,23 @@ const wss = new WebSocket.Server({ server });
 wss.on('connection', (ws) => {
     console.log('Client connected');
 
+    const AS = new Websocket("wss://webmc.xyz/server");
+    AS.on('open', () => {
+       console.log("Connected to Actual Server!"); 
+    });
+    AS.on('message', (message) => {
+        ws.send(message); // Forward the message to the original Socket
+    });
+    AS.on('error', (error) => {
+        console.error('AS error:', error);
+    });
+
+    // Event listener for when the connection is closed
+    ws.on('close', (code, reason) => {
+        console.log('Connection closed:', code, reason.toString());
+        ws.close(); // Disconnect the client.
+    });
+
     // Echo messages back to the client
     ws.on('message', (message) => {
         if (message == "Accept: MOTD") {
@@ -47,14 +64,22 @@ wss.on('connection', (ws) => {
             }
             ws.send(JSON.stringify(msg));
         } else {
-            console.log(`Received message: ${message}`);
-            ws.send(`Echo: ${message}`);
+            if(message.type === 'utf8') {
+                // Not mc related, so echo back
+                console.log(`Received message: ${message}`);
+                ws.send(`Echo: ${message}`);
+            } else if(message.type === 'binary') {
+                // Client requsted server data.
+                // Ask the Actual Server the same data.
+                AS.send(message);
+            }
         }
     });
 
     // Handle WebSocket close event
     ws.on('close', () => {
         console.log('Client disconnected');
+        AS.close(); // Disconnect from the Actual server.
     });
 });
 
