@@ -104,6 +104,8 @@ wss.on('connection', (ws) => {
                             }
                         }, 500);
                     }
+
+                    return; // Make sure to not call the send again after we already did it.
                 }
                 // Client requsted server data.
                 // Ask the Actual Server the same data.
