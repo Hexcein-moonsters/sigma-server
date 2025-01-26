@@ -35,7 +35,7 @@ wss.on('connection', (ws) => {
         // Event listener for when the connection is closed
         AS.on('close', (code, reason) => {
             console.log('Connection closed:', code, reason.toString());
-            ws.close(); // Disconnect the client.
+            ws.close(4002, reason); // Disconnect the client.
         });
         
     }
@@ -71,7 +71,7 @@ wss.on('connection', (ws) => {
                 }
             }
             ws.send(JSON.stringify(msg));
-            ws.close();
+            ws.close(4001);
         } else {
             if(message.type === 'utf8') {
                 // Not mc related, so echo back
@@ -94,9 +94,16 @@ wss.on('connection', (ws) => {
     });
 
     // Handle WebSocket close event
-    ws.on('close', () => {
-        console.log('Client disconnected');
-        AS.close(); // Disconnect from the Actual server.
+    ws.on('close', (event) => {
+        if (event.code === 4001) {
+            // Closed by us
+        } else if (event.code === 4002) {
+            // AS closed
+            console.log("AS closed.");
+        } else {
+            console.log('Client disconnected');
+            AS.close(); // Disconnect from the Actual server.
+        }
     });
 });
 
