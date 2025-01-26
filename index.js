@@ -39,6 +39,7 @@ wss.on('connection', (ws) => {
                 // Ws hang up
             } else {
                 console.log('AS connection closed:', code, reason);
+                console.log(reason.toString());
                 ws.close(4002, reason); // Disconnect the client.
             }
         });
