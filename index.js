@@ -77,6 +77,8 @@ wss.on('connection', (ws) => {
             ws.send(JSON.stringify(msg));
             ws.close(4001);
         } else {
+            console.log(message.type);
+            console.log(firstRun);
             if(message.type === 'utf8') {
                 // Not mc related, so echo back
                 console.log(`Received message: ${message}`);
@@ -99,6 +101,7 @@ wss.on('connection', (ws) => {
 
     // Handle WebSocket close event
     ws.on('close', (event) => {
+        console.log(event.code)
         if (event.code === 4001) {
             // Closed by us
         } else if (event.code === 4002) {
