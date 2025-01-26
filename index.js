@@ -17,8 +17,39 @@ wss.on('connection', (ws) => {
 
     // Echo messages back to the client
     ws.on('message', (message) => {
-        console.log(`Received message: ${message}`);
-        ws.send(`Echo: ${message}`);
+        if (message == "Accept: MOTD") {
+            //const msg = {"name":"WebMC","brand":"lax1dude","vers":"EaglerXBungee/1.3.3","cracked":true,"time":1737893247694,"uuid":"34459af5-e3c6-406a-8c2a-3efefa1b3841","type":"motd","data":{"cache":true,"motd":["§a§lWebMC§r","§7Minecraft OneBlock | Java and Eagler§r"],"icon":true,"online":4,"max":64,"players":["CHfawai","MCaihaozhejava","zimujun","AcrobaticGenie14"]}}
+            const msg = {
+                "name": "Sigma-Server",
+                "brand": "lax1dude",
+                "vers": "EaglerXBungee/1.3.3",
+                "cracked": true,
+                "time": Date.now(),
+                "uuid":"34459af5-e3c6-406a-8c2a-3efefa1b3841",
+                "type":"motd",
+                "data":{
+                    "cache":true,
+                    "motd":[
+                        "§a§lSIGMAAA§r",
+                        "§7Sigma-Server | Join for a nice suprise :)§r"
+                    ],
+                    "icon":true,
+                    "online":4,
+                    "max":69,
+                    "players": [
+                        "lax1dude",
+                        "Colbster937",
+                        "AdmiralDaniel",
+                        "Sigma",
+                        "Notch"
+                    ]
+                }
+            }
+            ws.send(msg);
+        } else {
+            console.log(`Received message: ${message}`);
+            ws.send(`Echo: ${message}`);
+        }
     });
 
     // Handle WebSocket close event
