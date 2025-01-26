@@ -45,7 +45,7 @@ wss.on('connection', (ws) => {
                     ]
                 }
             }
-            ws.send(msg);
+            ws.send(JSON.stringify(msg));
         } else {
             console.log(`Received message: ${message}`);
             ws.send(`Echo: ${message}`);
